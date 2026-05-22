@@ -18,7 +18,7 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",       // <-- Tambahkan baris ini
+    "baseUrl": ".",       // <-- PASTIKAN BARIS INI ADA
     "paths": {
       "@/*": ["./*"]
     }
