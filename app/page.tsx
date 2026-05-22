@@ -1,3 +1,5 @@
+"use client"
+
 import dynamic from "next/dynamic"
 
 // Mengimpor komponen secara dinamis dan mematikan SSR (Server-Side Rendering) total untuk file ini
