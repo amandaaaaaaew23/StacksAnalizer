@@ -145,11 +145,13 @@ export default function Home() {
           stringAsciiCV(data.type)
         ],
 
+        // PERBAIKAN: Menambahkan properti icon yang diwajibkan oleh TypeScript SDK
         appDetails: {
           name: "StacksAnalizer",
+          icon: "https://placehold.co/128x128/png",
         },
 
-        onFinish(txData) {
+        onFinish(txData: any) {
 
           setTxid(txData.txId)
 
