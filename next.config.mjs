@@ -7,18 +7,26 @@ const nextConfig = {
     "@stacks/common"
   ],
   
-  // Tambahkan baris ini agar Next.js 16 / Turbopack tidak error
   turbopack: {},
 
-  webpack: (config) => {
+  webpack: (config, { webpack }) => {
     config.resolve.fallback = {
+      ...config.resolve.fallback,
       fs: false,
       net: false,
       tls: false,
       crypto: false,
       stream: false,
-      buffer: false,
+      // Hapus buffer: false agar polyfill dapat bekerja
     };
+
+    // Inject global Buffer untuk package @stacks
+    config.plugins.push(
+      new webpack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
+      })
+    );
+
     return config;
   },
 };
