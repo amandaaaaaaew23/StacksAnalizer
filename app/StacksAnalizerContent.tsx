@@ -1,5 +1,11 @@
 "use client"
 
+// Polyfill Buffer murni menggunakan ESM (wajib di baris paling atas)
+import { Buffer as NodeBuffer } from "buffer"
+if (typeof window !== "undefined") {
+  window.Buffer = window.Buffer || NodeBuffer
+}
+
 import { useEffect, useState } from "react"
 import {
   AppConfig,
@@ -10,7 +16,6 @@ import {
 import { stringAsciiCV } from "@stacks/transactions"
 
 export default function StacksAnalizerContent() {
-  // State untuk memastikan komponen hanya jalan di Browser (Client)
   const [isMounted, setIsMounted] = useState(false)
   const [userSession, setUserSession] = useState<UserSession | null>(null)
   
@@ -22,7 +27,6 @@ export default function StacksAnalizerContent() {
   const [txid, setTxid] = useState("")
 
   useEffect(() => {
-    // Inisialisasi dijalankan setelah komponen masuk ke browser
     setIsMounted(true)
     const appConfig = new AppConfig(["store_write"])
     const session = new UserSession({ appConfig })
@@ -124,7 +128,6 @@ export default function StacksAnalizerContent() {
     }
   }
 
-  // Jika belum mounted (masih proses render server), kembalikan UI kosong agar tidak error Hydration
   if (!isMounted) {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">

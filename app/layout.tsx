@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,17 +30,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        {/* Menyediakan window.Buffer secara global untuk @stacks */}
-        <Script id="buffer-polyfill" strategy="beforeInteractive">
-          {`
-            if (typeof window !== 'undefined') {
-              window.Buffer = window.Buffer || require('buffer').Buffer;
-            }
-          `}
-        </Script>
-        {children}
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }
