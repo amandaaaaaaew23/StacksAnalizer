@@ -1,70 +1,52 @@
 "use client"
 
 import { useEffect, useState } from "react"
-
 import {
   AppConfig,
   UserSession,
   showConnect,
   openContractCall
 } from "@stacks/connect"
-
 import { stringAsciiCV } from "@stacks/transactions"
 
-const appConfig = new AppConfig(["store_write"])
-
-const userSession = new UserSession({
-  appConfig
-})
-
 export default function StacksAnalizerContent() {
-
   const [connected, setConnected] = useState(false)
-
   const [userAddress, setUserAddress] = useState("")
-
   const [wallet, setWallet] = useState("")
-
   const [loading, setLoading] = useState(false)
-
   const [result, setResult] = useState<any>(null)
-
   const [txid, setTxid] = useState("")
 
+  // Simpan userSession di state untuk menghindari error "window is not defined" di SSR
+  const [userSession, setUserSession] = useState<UserSession | null>(null)
+
   useEffect(() => {
+    // Inisialisasi Stacks Session hanya saat berada di sisi Client (Browser)
+    const appConfig = new AppConfig(["store_write"])
+    const session = new UserSession({ appConfig })
+    setUserSession(session)
 
-    if (userSession.isUserSignedIn()) {
-
-      const userData = userSession.loadUserData()
-
-      const address =
-        userData.profile.stxAddress.mainnet
-
+    if (session.isUserSignedIn()) {
+      const userData = session.loadUserData()
+      const address = userData.profile.stxAddress.mainnet
       setUserAddress(address)
-
       setConnected(true)
     }
-
   }, [])
 
   function generateScore(wallet: string) {
-
     let score = 50
-
     const tags = []
-
     const seed = wallet.length
 
     if (seed % 2 === 0) {
       score += 10
       tags.push("Bridge User")
     }
-
     if (seed % 3 === 0) {
       score += 15
       tags.push("NFT Holder")
     }
-
     if (seed % 5 === 0) {
       score += 20
       tags.push("DeFi Activity")
@@ -78,143 +60,80 @@ export default function StacksAnalizerContent() {
       risk = "Medium"
     }
 
-    return {
-      wallet,
-      score,
-      type,
-      risk,
-      tags
-    }
+    return { wallet, score, type, risk, tags }
   }
 
   const connectWallet = () => {
-
+    if (!userSession) return; // Pastikan session sudah terinisialisasi
+    
     showConnect({
-
       appDetails: {
         name: "StacksAnalizer",
         icon: "https://placehold.co/128x128/png",
       },
-
       redirectTo: "/",
-
       onFinish: () => {
-
         const userData = userSession.loadUserData()
-
-        const address =
-          userData.profile.stxAddress.mainnet
-
+        const address = userData.profile.stxAddress.mainnet
         setUserAddress(address)
-
         setConnected(true)
       },
-
       userSession
     })
   }
 
   const analyzeWallet = async () => {
-
     try {
-
       if (!connected) {
-
         alert("Connect wallet first")
-
         return
       }
 
       setLoading(true)
-
       await new Promise(resolve => setTimeout(resolve, 1200))
 
       const data = generateScore(wallet)
-
       setResult(data)
 
       await openContractCall({
-
         contractAddress: "SP6Y22GYPXRM900PC0W9ZC3D292PH2P1ZKQ5RQAT",
-
         contractName: "stacks-analizer",
-
         functionName: "analyze",
-
-        functionArgs: [
-          stringAsciiCV(data.type)
-        ],
-
+        functionArgs: [stringAsciiCV(data.type)],
         appDetails: {
           name: "StacksAnalizer",
           icon: "https://placehold.co/128x128/png",
         },
-
         onFinish(txData: any) {
-
           setTxid(txData.txId)
-
           setLoading(false)
         },
-
         onCancel() {
-
           setLoading(false)
         }
       })
-
     } catch (err) {
-
       console.log(err)
-
       setLoading(false)
     }
   }
 
   return (
-
     <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
-
       <div className="w-full max-w-xl border border-zinc-800 rounded-2xl p-8">
-
-        <h1 className="text-5xl font-bold mb-3">
-          StacksAnalizer
-        </h1>
-
-        <p className="text-zinc-400 mb-8">
-          AI powered wallet analyzer on Stacks
-        </p>
+        <h1 className="text-5xl font-bold mb-3">StacksAnalizer</h1>
+        <p className="text-zinc-400 mb-8">AI powered wallet analyzer on Stacks</p>
 
         {!connected ? (
-
           <div>
-
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 mb-6">
-
-              <div className="text-lg font-semibold mb-3">
-                Dapp Features
-              </div>
-
+              <div className="text-lg font-semibold mb-3">Dapp Features</div>
               <ul className="text-zinc-400 space-y-2 text-sm">
-
-                <li>
-                  • Wallet activity score
-                </li>
-
-                <li>
-                  • Organic / Sybil detection
-                </li>
-
-                <li>
-                  • Onchain activity proof
-                </li>
-
-                <li>
-                  • Mainnet transaction logging
-                </li>
-
+                <li>• Wallet activity score</li>
+                <li>• Organic / Sybil detection</li>
+                <li>• Onchain activity proof</li>
+                <li>• Mainnet transaction logging</li>
               </ul>
-
             </div>
 
             <button
@@ -223,19 +142,11 @@ export default function StacksAnalizerContent() {
             >
               Connect Wallet
             </button>
-
           </div>
-
         ) : (
-
           <div>
-
             <div className="mb-6 text-green-400 break-all">
-
-              Connected:
-              <br />
-              {userAddress}
-
+              Connected:<br />{userAddress}
             </div>
 
             <input
@@ -248,90 +159,47 @@ export default function StacksAnalizerContent() {
             <button
               onClick={analyzeWallet}
               disabled={loading}
-              className="w-full bg-white text-black py-4 rounded-xl font-semibold"
+              className="w-full bg-white text-black py-4 rounded-xl font-semibold cursor-pointer disabled:opacity-50"
             >
-
               {loading ? "Analyzing..." : "Analyze Wallet"}
-
             </button>
-
           </div>
-
         )}
 
         {result && (
-
           <div className="mt-8 border border-zinc-800 rounded-xl p-6">
-
-            <h2 className="text-2xl font-bold mb-5">
-              Analysis Result
-            </h2>
-
+            <h2 className="text-2xl font-bold mb-5">Analysis Result</h2>
             <div className="space-y-3">
-
-              <div>
-                Wallet: {result.wallet}
-              </div>
-
-              <div>
-                Score: {result.score}
-              </div>
-
-              <div>
-                Type: {result.type}
-              </div>
-
-              <div>
-                Risk: {result.risk}
-              </div>
-
-              <div>
-                Tags:
-              </div>
-
+              <div>Wallet: {result.wallet}</div>
+              <div>Score: {result.score}</div>
+              <div>Type: {result.type}</div>
+              <div>Risk: {result.risk}</div>
+              <div>Tags:</div>
               <div className="flex gap-2 flex-wrap">
-
                 {result.tags.map((tag: string) => (
-
-                  <span
-                    key={tag}
-                    className="bg-zinc-800 px-3 py-1 rounded-lg text-sm"
-                  >
+                  <span key={tag} className="bg-zinc-800 px-3 py-1 rounded-lg text-sm">
                     {tag}
                   </span>
-
                 ))}
-
               </div>
-
             </div>
-
           </div>
-
         )}
 
         {txid && (
-
           <div className="mt-6 break-all">
-
-            <p className="text-green-400 mb-2">
-              Transaction Success
-            </p>
-
+            <p className="text-green-400 mb-2">Transaction Success</p>
             <a
               href={`https://explorer.hiro.so/txid/${txid}?chain=mainnet`}
               target="_blank"
+              rel="noreferrer"
               className="underline text-green-400"
             >
               View Transaction
             </a>
-
           </div>
-
         )}
-
       </div>
-
     </main>
   )
 }
