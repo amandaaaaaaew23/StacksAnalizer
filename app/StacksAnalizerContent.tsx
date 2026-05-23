@@ -10,6 +10,10 @@ import {
 import { stringAsciiCV } from "@stacks/transactions"
 
 export default function StacksAnalizerContent() {
+  // State untuk memastikan komponen hanya jalan di Browser (Client)
+  const [isMounted, setIsMounted] = useState(false)
+  const [userSession, setUserSession] = useState<UserSession | null>(null)
+  
   const [connected, setConnected] = useState(false)
   const [userAddress, setUserAddress] = useState("")
   const [wallet, setWallet] = useState("")
@@ -17,11 +21,9 @@ export default function StacksAnalizerContent() {
   const [result, setResult] = useState<any>(null)
   const [txid, setTxid] = useState("")
 
-  // Simpan userSession di state untuk menghindari error "window is not defined" di SSR
-  const [userSession, setUserSession] = useState<UserSession | null>(null)
-
   useEffect(() => {
-    // Inisialisasi Stacks Session hanya saat berada di sisi Client (Browser)
+    // Inisialisasi dijalankan setelah komponen masuk ke browser
+    setIsMounted(true)
     const appConfig = new AppConfig(["store_write"])
     const session = new UserSession({ appConfig })
     setUserSession(session)
@@ -64,7 +66,7 @@ export default function StacksAnalizerContent() {
   }
 
   const connectWallet = () => {
-    if (!userSession) return; // Pastikan session sudah terinisialisasi
+    if (!userSession) return;
     
     showConnect({
       appDetails: {
@@ -86,6 +88,10 @@ export default function StacksAnalizerContent() {
     try {
       if (!connected) {
         alert("Connect wallet first")
+        return
+      }
+      if (!wallet) {
+        alert("Enter wallet address")
         return
       }
 
@@ -118,6 +124,17 @@ export default function StacksAnalizerContent() {
     }
   }
 
+  // Jika belum mounted (masih proses render server), kembalikan UI kosong agar tidak error Hydration
+  if (!isMounted) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+        <div className="w-full max-w-xl border border-zinc-800 rounded-2xl p-8 text-center text-zinc-500">
+          Loading...
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
       <div className="w-full max-w-xl border border-zinc-800 rounded-2xl p-8">
@@ -138,7 +155,7 @@ export default function StacksAnalizerContent() {
 
             <button
               onClick={connectWallet}
-              className="w-full bg-yellow-400 text-black py-4 rounded-xl font-bold"
+              className="w-full bg-yellow-400 text-black py-4 rounded-xl font-bold cursor-pointer hover:bg-yellow-500 transition"
             >
               Connect Wallet
             </button>
@@ -153,13 +170,13 @@ export default function StacksAnalizerContent() {
               value={wallet}
               onChange={(e) => setWallet(e.target.value)}
               placeholder="Enter wallet address"
-              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-4 mb-4 outline-none"
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-4 mb-4 outline-none focus:border-yellow-400 transition"
             />
 
             <button
               onClick={analyzeWallet}
               disabled={loading}
-              className="w-full bg-white text-black py-4 rounded-xl font-semibold cursor-pointer disabled:opacity-50"
+              className="w-full bg-white text-black py-4 rounded-xl font-semibold cursor-pointer disabled:opacity-50 hover:bg-zinc-200 transition"
             >
               {loading ? "Analyzing..." : "Analyze Wallet"}
             </button>
@@ -193,7 +210,7 @@ export default function StacksAnalizerContent() {
               href={`https://explorer.hiro.so/txid/${txid}?chain=mainnet`}
               target="_blank"
               rel="noreferrer"
-              className="underline text-green-400"
+              className="underline text-green-400 hover:text-green-300"
             >
               View Transaction
             </a>
