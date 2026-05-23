@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Memaksa Next.js/Turbopack untuk mengompilasi ulang package Web3 ini
   transpilePackages: [
     "@stacks/connect",
     "@stacks/transactions",
@@ -8,7 +7,9 @@ const nextConfig = {
     "@stacks/common"
   ],
   
-  // Memberikan fallback jika build engine mencoba mencari modul bawaan Node.js
+  // Tambahkan baris ini agar Next.js 16 / Turbopack tidak error
+  turbopack: {},
+
   webpack: (config) => {
     config.resolve.fallback = {
       fs: false,
