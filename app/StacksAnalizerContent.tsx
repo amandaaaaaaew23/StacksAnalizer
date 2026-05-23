@@ -1,5 +1,11 @@
 "use client"
 
+// Polyfill Buffer murni menggunakan ESM (wajib di baris paling atas)
+import { Buffer as NodeBuffer } from "buffer"
+if (typeof window !== "undefined") {
+  window.Buffer = window.Buffer || NodeBuffer
+}
+
 import { useEffect, useState } from "react"
 
 export default function StacksAnalizerContent() {
@@ -107,11 +113,14 @@ export default function StacksAnalizerContent() {
       }
 
       setLoading(true)
+      setResult(null) // Bersihkan hasil lama agar tidak membingungkan pengguna
+      setTxid("")     // Bersihkan txid lama
+
       await new Promise(resolve => setTimeout(resolve, 1200))
 
       const data = generateScore(wallet)
-      setResult(data)
 
+      // Menjalankan pemanggilan smart contract Stacks
       await stacksConnect.openContractCall({
         contractAddress: "SP6Y22GYPXRM900PC0W9ZC3D292PH2P1ZKQ5RQAT",
         contractName: "stacks-analizer",
@@ -122,10 +131,13 @@ export default function StacksAnalizerContent() {
           icon: "https://placehold.co/128x128/png",
         },
         onFinish(txData: any) {
+          // Callback ini hanya dipicu jika transaksi berhasil terkirim ke jaringan
           setTxid(txData.txId)
+          setResult(data) // <--- Sekarang hasil baru akan di-set dan muncul setelah TX terkirim!
           setLoading(false)
         },
         onCancel() {
+          // Jika pengguna menolak transaksi di Leather/Xverse Wallet
           setLoading(false)
         }
       })
@@ -188,7 +200,7 @@ export default function StacksAnalizerContent() {
               disabled={loading}
               className="w-full bg-white text-black py-4 rounded-xl font-semibold cursor-pointer disabled:opacity-50 hover:bg-zinc-200 transition"
             >
-              {loading ? "Analyzing..." : "Analyze Wallet"}
+              {loading ? "Processing Transaction..." : "Analyze Wallet"}
             </button>
           </div>
         )}
