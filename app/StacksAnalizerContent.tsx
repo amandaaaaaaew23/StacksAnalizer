@@ -1,23 +1,14 @@
 "use client"
 
-// Polyfill Buffer murni menggunakan ESM (wajib di baris paling atas)
-import { Buffer as NodeBuffer } from "buffer"
-if (typeof window !== "undefined") {
-  window.Buffer = window.Buffer || NodeBuffer
-}
-
 import { useEffect, useState } from "react"
-import {
-  AppConfig,
-  UserSession,
-  showConnect,
-  openContractCall
-} from "@stacks/connect"
-import { stringAsciiCV } from "@stacks/transactions"
 
 export default function StacksAnalizerContent() {
   const [isMounted, setIsMounted] = useState(false)
-  const [userSession, setUserSession] = useState<UserSession | null>(null)
+  const [userSession, setUserSession] = useState<any>(null)
+  
+  // State untuk menyimpan modul SDK yang dimuat secara dinamis
+  const [stacksConnect, setStacksConnect] = useState<any>(null)
+  const [stacksTransactions, setStacksTransactions] = useState<any>(null)
   
   const [connected, setConnected] = useState(false)
   const [userAddress, setUserAddress] = useState("")
@@ -27,17 +18,33 @@ export default function StacksAnalizerContent() {
   const [txid, setTxid] = useState("")
 
   useEffect(() => {
-    setIsMounted(true)
-    const appConfig = new AppConfig(["store_write"])
-    const session = new UserSession({ appConfig })
-    setUserSession(session)
+    // 1. Jalankan polyfill Buffer secara aman di level browser runtime
+    import("buffer").then((bufferModule) => {
+      if (typeof window !== "undefined") {
+        window.Buffer = window.Buffer || bufferModule.Buffer
+      }
+      
+      // 2. Muat library Stacks secara asinkronus untuk menghindari Turbopack compile-time bug
+      Promise.all([
+        import("@stacks/connect"),
+        import("@stacks/transactions")
+      ]).then(([connectMod, transMod]) => {
+        setStacksConnect(connectMod)
+        setStacksTransactions(transMod)
 
-    if (session.isUserSignedIn()) {
-      const userData = session.loadUserData()
-      const address = userData.profile.stxAddress.mainnet
-      setUserAddress(address)
-      setConnected(true)
-    }
+        const appConfig = new connectMod.AppConfig(["store_write"])
+        const session = new connectMod.UserSession({ appConfig })
+        setUserSession(session)
+
+        if (session.isUserSignedIn()) {
+          const userData = session.loadUserData()
+          const address = userData.profile.stxAddress.mainnet
+          setUserAddress(address)
+          setConnected(true)
+        }
+        setIsMounted(true)
+      }).catch(err => console.error("Gagal memuat SDK Stacks:", err))
+    })
   }, [])
 
   function generateScore(wallet: string) {
@@ -70,9 +77,9 @@ export default function StacksAnalizerContent() {
   }
 
   const connectWallet = () => {
-    if (!userSession) return;
+    if (!userSession || !stacksConnect) return;
     
-    showConnect({
+    stacksConnect.showConnect({
       appDetails: {
         name: "StacksAnalizer",
         icon: "https://placehold.co/128x128/png",
@@ -90,8 +97,8 @@ export default function StacksAnalizerContent() {
 
   const analyzeWallet = async () => {
     try {
-      if (!connected) {
-        alert("Connect wallet first")
+      if (!connected || !stacksConnect || !stacksTransactions) {
+        alert("Aplikasi belum siap atau wallet belum terhubung.")
         return
       }
       if (!wallet) {
@@ -105,11 +112,11 @@ export default function StacksAnalizerContent() {
       const data = generateScore(wallet)
       setResult(data)
 
-      await openContractCall({
+      await stacksConnect.openContractCall({
         contractAddress: "SP6Y22GYPXRM900PC0W9ZC3D292PH2P1ZKQ5RQAT",
         contractName: "stacks-analizer",
         functionName: "analyze",
-        functionArgs: [stringAsciiCV(data.type)],
+        functionArgs: [stacksTransactions.stringAsciiCV(data.type)],
         appDetails: {
           name: "StacksAnalizer",
           icon: "https://placehold.co/128x128/png",
@@ -132,7 +139,7 @@ export default function StacksAnalizerContent() {
     return (
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-6">
         <div className="w-full max-w-xl border border-zinc-800 rounded-2xl p-8 text-center text-zinc-500">
-          Loading...
+          Initializing Stacks SDK...
         </div>
       </main>
     )
