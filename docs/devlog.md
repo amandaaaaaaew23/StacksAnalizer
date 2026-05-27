@@ -24,3 +24,4 @@ Update devlog 103 at Kam 28 Mei 2026 01:32:30 WIB
 Update devlog 104 at Kam 28 Mei 2026 01:36:32 WIB
 Update devlog 106 at Kam 28 Mei 2026 01:44:40 WIB
 Update devlog 108 at Kam 28 Mei 2026 01:52:31 WIB
+Update devlog 117 at Kam 28 Mei 2026 02:33:00 WIB
