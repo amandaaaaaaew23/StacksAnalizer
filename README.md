@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🔍 StacksAnalizer
 
-## Getting Started
+![Stacks](https://img.shields.io/badge/Network-Stacks-5546FF?style=for-the-badge&logo=stacks&logoColor=white)
+![Bitcoin](https://img.shields.io/badge/Secured_by-Bitcoin-F7931A?style=for-the-badge&logo=bitcoin&logoColor=white)
+![Clarity](https://img.shields.io/badge/Smart_Contract-Clarity-blue?style=for-the-badge)
+![Next.js](https://img.shields.io/badge/Frontend-Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)
 
-First, run the development server:
+**StacksAnalizer** is an AI-powered wallet analyzer built on the **Stacks** blockchain. It helps Web3 projects and users detect organic vs. Sybil activity using on-chain data, and records proof of analysis immutably to the Stacks network.
+
+## 🌐 Ecosystem & Web3 Integration
+
+This dApp is proudly built for the **Stacks** and **Bitcoin** ecosystem. It utilizes the following Web3 technologies:
+- **Blockchain:** Stacks (Secured by Bitcoin)
+- **Smart Contract Language:** Clarity
+- **Web3 Integration:** Stacks.js (`@stacks/connect`, `@stacks/transactions`)
+- **Wallet Support:** Compatible with Stacks wallets like Leather and Xverse.
+- **Identity:** Talent Protocol verified ecosystem project.
+
+## ✨ Features
+
+- **Wallet Activity Score:** Calculates user engagement and interaction scores based on on-chain footprints.
+- **Sybil Detection:** Analyzes wallet behavior to flag potential Sybil attackers versus organic users.
+- **On-chain Activity Proof:** Interacts with a custom Clarity smart contract to log analysis records directly on the Stacks blockchain.
+- **Mainnet Transaction Logging:** Verifiable transaction history viewable on the Hiro Explorer.
+
+## 🛠️ Tech Stack
+
+### Frontend
+- Next.js (App Router)
+- React 19
+- Tailwind CSS
+- Stacks.js (`@stacks/connect`, `@stacks/transactions`)
+
+### Backend / Smart Contracts
+- **Clarity** (Smart Contract Language for Stacks)
+- **Clarinet** (Local development, testing, and deployment environment)
+- Vitest (For smart contract unit testing)
+
+## 📂 Project Structure
+
+- `/app` - Next.js frontend application (React components, UI, and Stacks wallet integration).
+- `/backend/contracts` - Contains the Clarity smart contracts (`stacks-analizer.clar`).
+- `/backend/tests` - Vitest test files for validating Clarity smart contract logic.
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v18+)
+- npm, yarn, or pnpm
+- [Clarinet](https://docs.hiro.so/clarinet/introduction) (for local smart contract development)
+- A Stacks-compatible wallet (Leather or Xverse)
+
+### 1. Running the Frontend
+Clone the repository and install the dependencies:
+
+```bash
+npm install
+# or
+yarn install
+
+```
+
+Start the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. Running Smart Contract Tests (Clarinet)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To test the Clarity smart contracts, navigate to the `backend` directory:
 
-## Learn More
+```bash
+cd backend
+npm install
+npm run test
 
-To learn more about Next.js, take a look at the following resources:
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To check contract syntax using Clarinet:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+clarinet check
 
-## Deploy on Vercel
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📜 Smart Contract Overview
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The core logic resides in `stacks-analizer.clar`. It maps user principals to their analysis stats and provides a public function `(analyze (tag (string-ascii 64)))` that increments the user's analysis count and prints an event to the Stacks blockchain containing the block height and wallet address.
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+```
