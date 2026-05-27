@@ -123,8 +123,8 @@ do
   safe_commit_push
 
   # delay 4–8 menit + jitter kecil biar lebih natural
-  BASE=$(( (RANDOM % 880) + 1080 ))
-  JITTER=$(( RANDOM % 120 ))
+  BASE=$(( (RANDOM % 120) + 180 ))
+  JITTER=$(( RANDOM % 60 ))
   SLEEP=$((BASE + JITTER))
 
   echo "[INFO] Sleep $SLEEP sec"
