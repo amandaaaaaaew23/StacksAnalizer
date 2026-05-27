@@ -4,3 +4,6 @@
 
 (define-read-only (get-random-82)
   (ok u82))
+
+(define-public (ping-98)
+  (ok true))
