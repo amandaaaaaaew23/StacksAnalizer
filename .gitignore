@@ -40,3 +40,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ignore 
+settings/Mainnet.toml
+settings/Testnet.toml
+settings/Devnet.toml
+.env
+human-activity.sh
+bot.sh
+keys.txt
+push-metrik.sh
+spam-log.txt
