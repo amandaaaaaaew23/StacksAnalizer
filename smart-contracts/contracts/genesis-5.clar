@@ -16,3 +16,6 @@
 
 (define-public (ping-180)
   (ok true))
+
+(define-read-only (get-random-18)
+  (ok u18))
