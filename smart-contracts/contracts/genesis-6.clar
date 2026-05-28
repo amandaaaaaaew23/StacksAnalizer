@@ -40,3 +40,6 @@
 
 (define-read-only (get-random-177)
   (ok u177))
+
+(define-public (ping-199)
+  (ok true))
