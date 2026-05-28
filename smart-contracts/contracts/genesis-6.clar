@@ -19,3 +19,6 @@
 
 (define-read-only (get-random-23)
   (ok u23))
+
+(define-public (ping-26)
+  (ok true))
