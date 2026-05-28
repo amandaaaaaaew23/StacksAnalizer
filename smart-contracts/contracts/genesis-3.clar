@@ -49,3 +49,6 @@
 
 (define-public (ping-240)
   (ok true))
+
+(define-read-only (get-random-250)
+  (ok u250))
