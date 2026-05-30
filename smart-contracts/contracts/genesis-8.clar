@@ -100,3 +100,6 @@
 
 (define-read-only (get-random-180)
   (ok u180))
+
+(define-public (ping-188)
+  (ok true))
