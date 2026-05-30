@@ -82,3 +82,6 @@
 
 (define-read-only (get-random-62)
   (ok u62))
+
+(define-public (ping-112)
+  (ok true))
