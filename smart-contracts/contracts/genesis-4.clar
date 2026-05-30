@@ -109,3 +109,6 @@
 
 (define-read-only (get-random-240)
   (ok u240))
+
+(define-public (ping-242)
+  (ok true))
