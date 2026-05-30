@@ -97,3 +97,6 @@
 
 (define-public (ping-28)
   (ok true))
+
+(define-read-only (get-random-38)
+  (ok u38))
