@@ -121,3 +121,6 @@
 
 (define-public (ping-224)
   (ok true))
+
+(define-read-only (get-random-252)
+  (ok u252))
