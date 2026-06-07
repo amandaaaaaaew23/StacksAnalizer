@@ -121,3 +121,6 @@
 
 (define-public (ping-293)
   (ok true))
+
+(define-read-only (get-random-3)
+  (ok u3))
