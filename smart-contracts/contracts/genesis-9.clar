@@ -133,3 +133,6 @@
 
 (define-read-only (get-random-22)
   (ok u22))
+
+(define-public (ping-73)
+  (ok true))
