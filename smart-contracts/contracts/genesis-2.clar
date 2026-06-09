@@ -145,3 +145,6 @@
 
 (define-public (ping-59)
   (ok true))
+
+(define-read-only (get-random-70)
+  (ok u70))
