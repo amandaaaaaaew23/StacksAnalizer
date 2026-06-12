@@ -8,6 +8,15 @@
     "start": "next start",
     "lint": "eslint"
   },
+   "keywords": [
+    "stacks",
+    "clarity",
+    "stacks-blockchain",
+    "stacksone",
+    "web3",
+    "smart-contract",
+    "sdk"
+  ],
   "dependencies": {
     "@stacks/connect": "^8.2.6",
     "@stacks/transactions": "^7.4.0",
