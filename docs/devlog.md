@@ -240,3 +240,4 @@ Update devlog 39 at Kam 11 Jun 2026 21:35:29 WIB
 Update devlog 49 at Jum 12 Jun 2026 00:10:16 WIB
 Update devlog 58 at Jum 12 Jun 2026 02:23:50 WIB
 Update devlog 9 at Sab 13 Jun 2026 14:10:13 WIB
+Update devlog 13 at Sab 13 Jun 2026 15:08:55 WIB
