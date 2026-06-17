@@ -166,3 +166,6 @@
 
 (define-public (ping-86)
   (ok true))
+
+(define-read-only (get-random-11)
+  (ok u11))
